@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import EventCard from "../components/events/EventCard";
-import API from "../utils/api";
+import api from "../utils/apiClient";
 
 const PAGE_SIZE = 6;
 
@@ -44,7 +44,7 @@ export default function Events() {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const res = await API.get("/events/filters"); // { categories: [...], locations: [...] }
+        const res = await api.get("/events/filters"); // { categories: [...], locations: [...] }
         setCategoryOptions(res.data.categories || []);
         setLocationOptions(res.data.locations || []);
       } catch (error) {
@@ -59,7 +59,7 @@ export default function Events() {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const res = await API.get("/events", {
+        const res = await api.get("/events", {
           params: {
             q: debouncedSearch,
             category,

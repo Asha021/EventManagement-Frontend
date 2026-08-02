@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import API from "../utils/api";
+import api from "../utils/apiClient";
 
 export default function Register() {
 
@@ -30,7 +30,7 @@ export default function Register() {
     try {
       setSubmitting(true);
 
-      const res = await API.post("/auth/register", {
+      const res = await api.post("/auth/register", {
         name: form.name,
         email: form.email,
         password: form.password,

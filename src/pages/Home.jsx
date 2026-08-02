@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "../components/ui/button";
 import EventCard from "../components/events/EventCard";
-import api from "../utils/api";
+import api from "../utils/apiClient";
 
 
 export default function Home() {

@@ -8,7 +8,7 @@ import SeatGauge from "../components/events/SeatGauge";
 import { useAuth } from "../context/AuthContext";
 import { useBookings } from "../context/BookingsContext";
 import { formatDate, formatTime } from "../lib/utils";
-import API from "../utils/api";
+import api from "../utils/apiClient";
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -22,7 +22,7 @@ export default function EventDetails() {
 
   useEffect(() => {
     setLoading(true);
-    API.get(`/events/${id}`)
+    api.get(`/events/${id}`)
       .then((res) => setEvent(res.data.event))
       .catch((err) => console.error("Error fetching event:", err))
       .finally(() => setLoading(false));
@@ -53,7 +53,7 @@ export default function EventDetails() {
       return;
     }
     setBusy(true);
-    API.post(`/registrations/${event._id || event.id}`)
+    api.post(`/registrations/${event._id || event.id}`)
       .then(() => {
         const res = registerForEvent(event._id || event.id);
         setEvent(prev => ({ ...prev, availableSeats: prev.availableSeats - 1 }));
@@ -68,7 +68,7 @@ export default function EventDetails() {
 
   function handleCancel() {
     setBusy(true);
-    API.put(`/registrations/${event._id || event.id}`)
+    api.put(`/registrations/${event._id || event.id}`)
       .then(() => {
         const res = cancelRegistration(event._id || event.id);
         setEvent(prev => ({ ...prev, availableSeats: prev.availableSeats + 1 }));

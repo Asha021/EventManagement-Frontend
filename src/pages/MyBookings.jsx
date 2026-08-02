@@ -6,7 +6,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { useBookings } from "../context/BookingsContext";
 import { formatDate, formatTime } from "../lib/utils";
-import API from "../utils/api";
+import api from "../utils/apiClient";
 
 export default function MyBookings() {
   const { myBookings, cancelRegistration } = useBookings();
@@ -48,7 +48,7 @@ function BookingList({ bookings, onCancel, cancellable }) {
   const handleCancel = async (eventId) => {
     try {
       setBusy(eventId);
-      await API.put(`/registrations/${eventId}`);
+      await api.put(`/registrations/${eventId}`);
       onCancel(eventId);
     } catch (err) {
       console.error(err);
