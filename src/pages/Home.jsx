@@ -1,11 +1,27 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "../components/ui/button";
 import EventCard from "../components/events/EventCard";
-import { events } from "../data/events";
+import api from "../utils/API";
+
 
 export default function Home() {
-  const featured = events.filter((e) => e.featured).slice(0, 3);
+  // const featured = events.filter((e) => e.featured).slice(0, 3);
+  
+const [featured, setFeatured] = useState([]);
+
+useEffect(() => {
+const fetchFeaturedEvents = async () => {
+  try {
+    const response = await api.get("/events");
+    setFeatured(response.data.events.slice(0, 3)); // adjust key to match
+  } catch (error) {
+    console.error("Error fetching featured events:", error);
+  }
+};
+  fetchFeaturedEvents();
+}, []);
 
   return (
     <div>

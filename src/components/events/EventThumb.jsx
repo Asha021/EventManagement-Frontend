@@ -16,8 +16,19 @@ function hashStr(str) {
 }
 
 export default function EventThumb({ event, className }) {
+
+  if (event.image) {
+    return (
+      <img
+        src={event.image}
+        alt={event.title}
+        className={cn("h-full w-full object-cover", className)}
+      />
+    );
+  }
+
   const [c1, c2] = palettes[event.category] || ["#3F5A38", "#14150F"];
-  const seed = hashStr(event.id);
+  const seed = hashStr(event._id);
   const angle = seed % 360;
   const cx = 20 + (seed % 60);
   const cy = 20 + ((seed >> 3) % 60);
@@ -25,14 +36,14 @@ export default function EventThumb({ event, className }) {
 
   return (
     <div className={cn("relative overflow-hidden bg-ink", className)}>
-      <svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice">
+    <svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice">
         <defs>
-          <linearGradient id={`g-${event.id}`} gradientTransform={`rotate(${angle})`}>
+          <linearGradient id={`g-${event._id}`} gradientTransform={`rotate(${angle})`}>
             <stop offset="0%" stopColor={c1} />
             <stop offset="100%" stopColor={c2} />
           </linearGradient>
         </defs>
-        <rect width="200" height="200" fill={`url(#g-${event.id})`} />
+        <rect width="200" height="200" fill={`url(#g-${event._id})`} />
         <circle cx={cx * 2} cy={cy * 2} r={r} fill="#F1EFE3" fillOpacity="0.08" />
         <circle cx={200 - cx * 1.5} cy={200 - cy} r={r * 0.6} fill="#F1EFE3" fillOpacity="0.06" />
       </svg>

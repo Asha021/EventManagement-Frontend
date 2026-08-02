@@ -13,7 +13,26 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { useBookings } from "../context/BookingsContext";
-import { categories, locations } from "../data/events";
+
+const categories = [
+  "Conference",
+  "Workshop",
+  "Seminar",
+  "Concert",
+  "Sports",
+  "Festival",
+  "Other",
+];
+
+const locations = [
+  "New York",
+  "London",
+  "Paris",
+  "Tokyo",
+  "Mumbai",
+  "Delhi",
+  "Bangalore",
+];
 
 const emptyForm = {
   name: "",

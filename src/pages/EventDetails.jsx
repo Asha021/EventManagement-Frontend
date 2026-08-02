@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { MapPin, Calendar, Clock, Users, ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/button";
@@ -8,17 +8,29 @@ import SeatGauge from "../components/events/SeatGauge";
 import { useAuth } from "../context/AuthContext";
 import { useBookings } from "../context/BookingsContext";
 import { formatDate, formatTime } from "../lib/utils";
-import { seatsLeft } from "../data/events";
+import API from "../utils/API";
 
 export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { events, isRegistered, registerForEvent, cancelRegistration } = useBookings();
+  const { isRegistered, registerForEvent, cancelRegistration } = useBookings();
   const [message, setMessage] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const event = events.find((e) => e.id === id);
+  useEffect(() => {
+    setLoading(true);
+    API.get(`/events/${id}`)
+      .then((res) => setEvent(res.data.event))
+      .catch((err) => console.error("Error fetching event:", err))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return <div className="mx-auto max-w-3xl px-5 py-24 text-center"><p className="font-display text-2xl">Loading event...</p></div>;
+  }
 
   if (!event) {
     return (
@@ -31,29 +43,42 @@ export default function EventDetails() {
     );
   }
 
-  const registered = isRegistered(event.id);
-  const full = seatsLeft(event) === 0;
+  const registered = isRegistered(event._id || event.id);
+  const available = event.availableSeats || 0;
+  const full = available === 0;
 
   function handleRegister() {
     if (!user) {
-      navigate("/login", { state: { from: { pathname: `/events/${event.id}` } } });
+      navigate("/login", { state: { from: { pathname: `/events/${event._id || event.id}` } } });
       return;
     }
     setBusy(true);
-    setTimeout(() => {
-      const res = registerForEvent(event.id);
-      setBusy(false);
-      setMessage(res.ok ? { type: "success", text: "You're registered for this event." } : { type: "error", text: res.error });
-    }, 350);
+    API.post(`/registrations/${event._id || event.id}`)
+      .then(() => {
+        const res = registerForEvent(event._id || event.id);
+        setEvent(prev => ({ ...prev, availableSeats: prev.availableSeats - 1 }));
+        setBusy(false);
+        setMessage(res.ok ? { type: "success", text: "You're registered for this event." } : { type: "error", text: res.error });
+      })
+      .catch((err) => {
+        setBusy(false);
+        setMessage({ type: "error", text: err.response?.data?.message || "Registration failed" });
+      });
   }
 
   function handleCancel() {
     setBusy(true);
-    setTimeout(() => {
-      const res = cancelRegistration(event.id);
-      setBusy(false);
-      setMessage(res.ok ? { type: "success", text: "Registration cancelled." } : { type: "error", text: res.error });
-    }, 350);
+    API.put(`/registrations/${event._id || event.id}`)
+      .then(() => {
+        const res = cancelRegistration(event._id || event.id);
+        setEvent(prev => ({ ...prev, availableSeats: prev.availableSeats + 1 }));
+        setBusy(false);
+        setMessage(res.ok ? { type: "success", text: "Registration cancelled." } : { type: "error", text: res.error });
+      })
+      .catch((err) => {
+        setBusy(false);
+        setMessage({ type: "error", text: err.response?.data?.message || "Cancellation failed" });
+      });
   }
 
   return (
@@ -66,11 +91,11 @@ export default function EventDetails() {
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
         <Badge variant="cactus">{event.category}</Badge>
-        {event.price === 0 ? <Badge variant="sand">Free</Badge> : <Badge variant="outline">₹{event.price}</Badge>}
-        <span className="ml-auto font-mono text-xs text-muted">{event.id}</span>
+        {event.price === 0 ? <Badge variant="sand">Free</Badge> : (event.price ? <Badge variant="outline">₹{event.price}</Badge> : null)}
+        <span className="ml-auto font-mono text-xs text-muted">{event._id || event.id}</span>
       </div>
 
-      <h1 className="mt-3 font-display text-3xl sm:text-4xl">{event.name}</h1>
+      <h1 className="mt-3 font-display text-3xl sm:text-4xl">{event.title || event.name}</h1>
       <p className="mt-1 text-sm text-muted">Organized by {event.organizer}</p>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-3">
@@ -79,7 +104,7 @@ export default function EventDetails() {
           <p className="text-ink/80 leading-relaxed">{event.description}</p>
 
           <div className="mt-6 flex flex-wrap gap-2">
-            {event.tags.map((t) => (
+            {(event.tags || []).map((t) => (
               <Badge key={t} variant="outline">
                 {t}
               </Badge>

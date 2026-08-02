@@ -14,7 +14,6 @@ import {
 } from "../components/ui/dialog";
 import { useBookings } from "../context/BookingsContext";
 import { formatDate, formatTime } from "../lib/utils";
-import { seatsLeft } from "../data/events";
 
 export default function AdminDashboard() {
   const { events, bookings, deleteEvent } = useBookings();
@@ -84,7 +83,7 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-1.5">
                     <Users className="h-3.5 w-3.5 text-muted" />
                     {event.registered}/{event.capacity}
-                    {seatsLeft(event) === 0 && (
+                    {event.availableSeats === 0 && (
                       <Badge variant="bloom" className="ml-1">
                         Full
                       </Badge>

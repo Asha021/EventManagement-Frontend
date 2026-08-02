@@ -1,9 +1,9 @@
 import { cn } from "../../lib/utils";
-import { occupancyRate, seatsLeft } from "../../data/events";
 
 export default function SeatGauge({ event, className }) {
-  const rate = occupancyRate(event);
-  const left = seatsLeft(event);
+  const left = event.availableSeats || 0;
+  const registered = event.capacity ? event.capacity - left : 0;
+  const rate = event.capacity ? registered / event.capacity : 0;
   const isFull = left === 0;
   const isAlmostFull = !isFull && rate >= 0.85;
 
@@ -14,7 +14,7 @@ export default function SeatGauge({ event, className }) {
           {isFull ? "Sold out" : `${left} seat${left === 1 ? "" : "s"} left`}
         </span>
         <span className="font-mono text-[10px] text-muted">
-          {event.registered}/{event.capacity}
+          {registered}/{event.capacity}
         </span>
       </div>
       <div className="h-1.5 w-full bg-ink/10 overflow-hidden">

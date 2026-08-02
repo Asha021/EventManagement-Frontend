@@ -1,34 +1,45 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useAuth } from "../context/AuthContext";
+import api from "../utils/API";
 
 export default function Login() {
-  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { setUser } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const from = location.state?.from?.pathname || "/dashboard";
 
-  function handleSubmit(e) {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+
     setSubmitting(true);
-    setTimeout(() => {
-      const res = login(form.email, form.password);
-      setSubmitting(false);
-      if (!res.ok) {
-        setError(res.error);
-        return;
-      }
+    setError("");
+
+    try {
+      const res = await api.post("/auth/login", form);
+
+      localStorage.setItem("cf_token", res.data.token);
+      localStorage.setItem("cf_user", JSON.stringify(res.data.user));
+      setUser(res.data.user);
+
       navigate(from, { replace: true });
-    }, 400);
-  }
+    } catch (error) {
+      setError(
+        error.response?.data?.message || "Login failed"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div>
@@ -63,7 +74,11 @@ export default function Login() {
           />
         </div>
 
-        {error && <p className="border border-bloom-100 bg-bloom-50 px-3 py-2 text-sm text-bloom-600">{error}</p>}
+        {error && (
+          <p className="border border-bloom-100 bg-bloom-50 px-3 py-2 text-sm text-bloom-600">
+            {error}
+          </p>
+        )}
 
         <Button type="submit" variant="cactus" className="w-full" disabled={submitting}>
           {submitting ? "Signing in…" : "Log in"}

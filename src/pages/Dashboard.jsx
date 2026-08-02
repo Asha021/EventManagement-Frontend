@@ -72,12 +72,12 @@ export default function Dashboard() {
             {past.map((b) => (
               <div key={b.id} className="flex items-center justify-between py-4">
                 <div>
-                  <div className="font-display text-lg">{b.event.name}</div>
+                  <div className="font-display text-lg">{b.event.title || b.event.name}</div>
                   <div className="text-xs text-muted">
                     {formatDate(b.event.date)} &middot; {b.event.venue}, {b.event.location}
                   </div>
                 </div>
-                <Link to={`/events/${b.event.id}`} className="eyebrow text-cactus-600 hover:text-cactus-700">
+                <Link to={`/events/${b.event._id || b.event.id}`} className="eyebrow text-cactus-600 hover:text-cactus-700">
                   Details
                 </Link>
               </div>

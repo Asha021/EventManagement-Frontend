@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Calendar } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
@@ -5,6 +6,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { useBookings } from "../context/BookingsContext";
 import { formatDate, formatTime } from "../lib/utils";
+import API from "../utils/API";
 
 export default function MyBookings() {
   const { myBookings, cancelRegistration } = useBookings();
@@ -41,6 +43,21 @@ export default function MyBookings() {
 }
 
 function BookingList({ bookings, onCancel, cancellable }) {
+  const [busy, setBusy] = useState(null);
+
+  const handleCancel = async (eventId) => {
+    try {
+      setBusy(eventId);
+      await API.put(`/registrations/${eventId}`);
+      onCancel(eventId);
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Cancellation failed");
+    } finally {
+      setBusy(null);
+    }
+  };
+
   if (bookings.length === 0) {
     return (
       <div className="border border-dashed border-ink/20 py-16 text-center">
@@ -59,10 +76,10 @@ function BookingList({ bookings, onCancel, cancellable }) {
           <div>
             <div className="mb-1 flex items-center gap-2">
               <Badge variant="cactus">{b.event.category}</Badge>
-              <span className="font-mono text-[10px] text-muted">{b.event.id}</span>
+              <span className="font-mono text-[10px] text-muted">{b.event._id || b.event.id}</span>
             </div>
-            <Link to={`/events/${b.event.id}`} className="font-display text-lg hover:text-cactus-600">
-              {b.event.name}
+            <Link to={`/events/${b.event._id || b.event.id}`} className="font-display text-lg hover:text-cactus-600">
+              {b.event.title || b.event.name}
             </Link>
             <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
               <span className="flex items-center gap-1">
@@ -74,8 +91,13 @@ function BookingList({ bookings, onCancel, cancellable }) {
             </div>
           </div>
           {cancellable && (
-            <Button variant="outline" size="sm" onClick={() => onCancel(b.event.id)}>
-              Cancel
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleCancel(b.event._id || b.event.id)}
+              disabled={busy === (b.event._id || b.event.id)}
+            >
+              {busy === (b.event._id || b.event.id) ? "Cancelling..." : "Cancel"}
             </Button>
           )}
         </div>
