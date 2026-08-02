@@ -6,7 +6,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { useBookings } from "../context/BookingsContext";
 import { formatDate, formatTime } from "../lib/utils";
-import API from "../utils/API";
+import API from "../utils/api";
 
 export default function MyBookings() {
   const { myBookings, cancelRegistration } = useBookings();

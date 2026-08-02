@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import EventCard from "../components/events/EventCard";
-import API from "../utils/API";
+import API from "../utils/api";
 
 const PAGE_SIZE = 6;
 

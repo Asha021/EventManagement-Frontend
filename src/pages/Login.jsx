@@ -5,7 +5,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useAuth } from "../context/AuthContext";
-import api from "../utils/API";
+import api from "../utils/api";
 
 export default function Login() {
   const navigate = useNavigate();

@@ -17,7 +17,7 @@ export function BookingsProvider({ children }) {
   const [backendBookings, setBackendBookings] = useState([]);
 
   useEffect(() => {
-    import("../utils/API").then(({ default: API }) => {
+    import("../utils/api").then(({ default: API }) => {
       API.get("/events")
         .then((res) => {
           if (res.data?.events) {
@@ -45,7 +45,7 @@ export function BookingsProvider({ children }) {
 
   const fetchMyBookings = () => {
     if (user) {
-      import("../utils/API").then(({ default: API }) => {
+      import("../utils/api").then(({ default: API }) => {
         API.get("/registrations/my-events")
           .then((res) => {
              const formatted = res.data.map(b => ({

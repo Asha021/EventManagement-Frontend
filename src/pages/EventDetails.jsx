@@ -8,7 +8,7 @@ import SeatGauge from "../components/events/SeatGauge";
 import { useAuth } from "../context/AuthContext";
 import { useBookings } from "../context/BookingsContext";
 import { formatDate, formatTime } from "../lib/utils";
-import API from "../utils/API";
+import API from "../utils/api";
 
 export default function EventDetails() {
   const { id } = useParams();
