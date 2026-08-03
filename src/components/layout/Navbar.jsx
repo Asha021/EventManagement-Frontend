@@ -43,16 +43,6 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
-          {user?.role === "admin" && (
-            <NavLink
-              to="/admin"
-              className={({ isActive }) =>
-                cn("eyebrow transition-colors hover:text-ink", isActive ? "text-ink" : "text-ink/50")
-              }
-            >
-              Admin
-            </NavLink>
-          )}
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -107,11 +97,7 @@ export default function Navbar() {
                 {link.label}
               </NavLink>
             ))}
-            {user?.role === "admin" && (
-              <NavLink to="/admin" onClick={() => setOpen(false)} className="eyebrow text-ink/70">
-                Admin
-              </NavLink>
-            )}
+
             <div className="mt-2 flex gap-3 border-t border-ink/15 pt-4">
               {user ? (
                 <Button
