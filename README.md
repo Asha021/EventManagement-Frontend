@@ -9,7 +9,7 @@ state persisted to `localStorage` so logins and bookings survive a refresh.
 - React 19 + Vite (JavaScript, no TypeScript, no Next.js)
 - React Router DOM (client-side routing)
 - Tailwind CSS
-- shadcn/ui-style components (hand-built on Radix primitives: dialog, select, tabs)
+- shadcn/ui-style components (hand-built on Radix primitives:   dialog, select, tabs)
 - lucide-react icons
 
 ## Getting started
