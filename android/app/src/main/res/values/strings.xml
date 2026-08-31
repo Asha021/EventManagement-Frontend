@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">cactus-events</string>
+    <string name="title_activity_main">cactus-events</string>
+    <string name="package_name">com.cactusevents.app</string>
+    <string name="custom_url_scheme">com.cactusevents.app</string>
+</resources>

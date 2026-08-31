@@ -11,6 +11,7 @@ export default function Dashboard() {
 
   const bookings = myBookings();
   const now = new Date();
+  
   const upcoming = bookings
     .filter((b) => new Date(b.event.date) >= now)
     .sort((a, b) => new Date(a.event.date) - new Date(b.event.date));
