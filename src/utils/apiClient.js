@@ -1,12 +1,18 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === "development" 
-    ? "http://localhost:3000/api" 
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === "development"
+    ? "http://localhost:3000/api"
     : "https://eventmanagement-backend-1-82fc.onrender.com/api");
+
+// Capacitor app detect karo (native WebView)
+const isCapacitor = typeof window !== "undefined" &&
+    (window.location.protocol === "capacitor:" || 
+     window.location.protocol === "ionic:" ||
+     window?.Capacitor?.isNativePlatform?.());
 
 const api = axios.create({
     baseURL: API_URL,
-    withCredentials: true,
+    withCredentials: !isCapacitor, // Capacitor mein cookies kaam nahi karti, token se kaam chalega
     headers: {
         "Content-Type": "application/json",
     },

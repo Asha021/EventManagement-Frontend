@@ -33,8 +33,9 @@ export default function Login() {
 
       navigate(from, { replace: true });
     } catch (error) {
+      console.error("Login Error Details:", error);
       setError(
-        error.response?.data?.message || "Login failed"
+        error.response?.data?.message || error.message || "Login failed"
       );
     } finally {
       setSubmitting(false);

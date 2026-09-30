@@ -40,8 +40,9 @@ export default function Register() {
 
       navigate("/login");
     } catch (error) {
+      console.error("Registration Error Details:", error);
       setError(
-        error.response?.data?.message || "Registration failed"
+        error.response?.data?.message || error.message || "Registration failed"
       );
     } finally {
       setSubmitting(false);
